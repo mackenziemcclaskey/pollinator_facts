@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import './App.css';
 
 const beeFacts = [
@@ -14,26 +15,42 @@ const beeFacts = [
     "Honey bees can recognize human faces."
 ];
 
-function App() {
-    const [fact, setFact] = useState('');
-
-    useEffect(() => {
-        // Set a random fact on initial render
-        setFact(beeFacts[Math.floor(Math.random() * beeFacts.length)]);
-    }, []);
-
-    const getRandomFact = () => {
-        setFact(beeFacts[Math.floor(Math.random() * beeFacts.length)]);
-    };
+const FactPage = ({ match }: { match: any }) => {
+    const factIndex = parseInt(match.params.id, 10);
+    const fact = beeFacts[factIndex];
 
     return (
         <div className="App">
             <header className="App-header">
                 <h1>Bee Facts</h1>
                 <p>{fact}</p>
-                <button onClick={getRandomFact}>New Fact</button>
+                <Link to="/">Go back</Link>
             </header>
         </div>
+    );
+};
+
+function App() {
+    return (
+        <Router>
+            <Switch>
+                <Route path="/" exact>
+                    <div className="App">
+                        <header className="App-header">
+                            <h1>Bee Facts</h1>
+                            <ul>
+                                {beeFacts.map((fact, index) => (
+                                    <li key={index}>
+                                        <Link to={`/fact/${index}`}>{fact}</Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </header>
+                    </div>
+                </Route>
+                <Route path="/fact/:id" component={FactPage} />
+            </Switch>
+        </Router>
     );
 }
 
